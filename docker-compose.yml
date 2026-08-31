@@ -8,6 +8,7 @@ services:
         PREZ_VERSION: ${PREZ_VERSION:-4.23.7}
     image: bdr-resources-prez:${PREZ_VERSION:-4.23.7}
     environment:
+      SPARQL_REPO_TYPE: remote
       SPARQL_ENDPOINT: ${SPARQL_ENDPOINT:-https://fuseki.dev.kurrawong.ai/bdr-res/sparql}
       SPARQL_USERNAME: ${SPARQL_USERNAME:-bdr-res}
       SPARQL_PASSWORD: ${SPARQL_PASSWORD:?Set SPARQL_PASSWORD in docker/.env}

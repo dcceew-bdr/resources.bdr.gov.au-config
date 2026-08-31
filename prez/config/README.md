@@ -1,6 +1,4 @@
-# Prez Config data
+# Prez configuration data
 
-Put data - RDF files - in here that you wish to override the standard Prez API config with. 
-
-For example, `endpoint/` and `profiles/`, as per https://github.com/RDFLib/prez/tree/main/prez/reference_data/endpoints
-and https://github.com/RDFLib/prez/tree/main/prez/reference_data/profiles respectively.
+The endpoint override maps Prez's standard catalogue routes to BDR's
+`schema:DataCatalog` and `schema:hasPart` hierarchy.
