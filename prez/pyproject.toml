@@ -1,7 +1,7 @@
 [project]
-name = "ospd-prez-function"
+name = "bdr-prez-function"
 version = "0.1.0"
-description = "Azure Functions host for the OSPD Prez API"
+description = "Azure Functions host for the BDR Prez API"
 readme = "README.md"
 requires-python = "==3.12.*"
 dependencies = [

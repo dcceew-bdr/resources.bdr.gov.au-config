@@ -34,7 +34,7 @@ def prepare_reference_data() -> pathlib.Path:
         )
 
     merged_reference_data = pathlib.Path(
-        tempfile.mkdtemp(prefix="ospd-prez-reference-data-")
+        tempfile.mkdtemp(prefix="bdr-prez-reference-data-")
     )
     shutil.copytree(
         packaged_reference_data,

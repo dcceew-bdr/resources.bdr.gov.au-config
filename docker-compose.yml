@@ -1,0 +1,68 @@
+services:
+  prez:
+    profiles: ["container"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PREZ_VERSION: ${PREZ_VERSION:-4.23.7}
+    image: bdr-resources-prez:${PREZ_VERSION:-4.23.7}
+    environment:
+      SPARQL_ENDPOINT: ${SPARQL_ENDPOINT:-https://fuseki.dev.kurrawong.ai/bdr-res/sparql}
+      SPARQL_USERNAME: ${SPARQL_USERNAME:-bdr-res}
+      SPARQL_PASSWORD: ${SPARQL_PASSWORD:?Set SPARQL_PASSWORD in docker/.env}
+      ENABLE_SPARQL_ENDPOINT: "true"
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:3000}
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://prez:8000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 6
+    restart: unless-stopped
+
+  prez-ui:
+    profiles: ["container"]
+    build:
+      context: prez-ui
+      dockerfile: Dockerfile
+      args:
+        PREZ_UI_VERSION: ${PREZ_UI_VERSION:-4.3.3}
+        NUXT_PUBLIC_PREZ_API_ENDPOINT: http://localhost:3000/api
+    environment:
+      PREZ_UPSTREAM: http://prez:8000
+    image: bdr-resources-prez-ui:${PREZ_UI_VERSION:-4.3.3}
+    ports:
+      - "3000:3000"
+    depends_on:
+      prez:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://prez-ui:3000/"]
+      interval: 5s
+      timeout: 5s
+      retries: 6
+    restart: unless-stopped
+
+  prez-ui-functions:
+    profiles: ["functions"]
+    build:
+      context: prez-ui
+      dockerfile: Dockerfile
+      args:
+        PREZ_UI_VERSION: ${PREZ_UI_VERSION:-4.3.3}
+        NUXT_PUBLIC_PREZ_API_ENDPOINT: http://localhost:3000/api
+    environment:
+      PREZ_UPSTREAM: http://host.docker.internal:7071
+    image: bdr-resources-prez-ui:${PREZ_UI_VERSION:-4.3.3}-functions
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://prez-ui-functions:3000/"]
+      interval: 5s
+      timeout: 5s
+      retries: 6
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

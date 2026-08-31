@@ -1,4 +1,4 @@
-# OSPD Demo
+# BDR Reference Data Catalogue
 
 This repository contains the configuration needed for the configuration of the [Prez](https://prez.dev) tool, as 
 deployed for the [Biodiversity Data repository](https://bdr.gov.au)'s reference data catalogue at <https://resources.bdr.gov.au>.
@@ -125,8 +125,8 @@ settings in Azure:
 FUNCTIONS_WORKER_RUNTIME=python
 AzureWebJobsFeatureFlags=EnableWorkerIndexing
 SPARQL_REPO_TYPE=remote
-SPARQL_ENDPOINT=https://fuseki.dev.kurrawong.ai/ospd/sparql
-SPARQL_USERNAME=ospd
+SPARQL_ENDPOINT=https://fuseki.dev.kurrawong.ai/bdr-res/sparql
+SPARQL_USERNAME=bdr-res
 SPARQL_PASSWORD=<secret>
 ENABLE_SPARQL_ENDPOINT=true
 FUNCTION_APP_AUTH_LEVEL=ANONYMOUS
@@ -198,23 +198,19 @@ Browser network requests from PrezUI should go directly to the Function hostname
 must not contain `localhost` or `/api`, and must return exactly one matching
 `Access-Control-Allow-Origin` header.
 
-### Infracode deployment
-
-These apps are deployed via terraform in the shared-fuseki-vm repo: `ospd-demo.tf`. See the deploying instructions in 
-that repo's README file, _OSPD Demo_ section.
-
 ## Image layout
 
 The root `Dockerfile` extends the selected Prez image and copies the configuration
 under `prez/config` into the image. The files are stored directly in this repository
 so Docker builds do not depend on absolute symlinks or another source checkout.
 
-`prez-ui-docker/Dockerfile` creates a Prez UI application at the selected version,
-applies the OSPD components and pages from `prez-ui-docker/overrides`, generates
-the static site, and copies it into an Nginx runtime image.
+`prez-ui/Dockerfile` creates an unmodified Prez UI application at the
+selected version, generates the static site, and copies it into an Nginx runtime
+image.
 
 `docker-compose.yml` builds and runs the two images. The browser-facing API endpoint
-is embedded into the static UI at build time through `PREZ_API_ENDPOINT`.
+is embedded into the static UI at build time through
+`NUXT_PUBLIC_PREZ_API_ENDPOINT`.
 
 The `functions` Compose profile builds only the UI, targeting the local Azure
 Functions host at port 7071. The Python Function App under `prez/` merges Prez's

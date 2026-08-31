@@ -21,7 +21,6 @@ RUN pnpm dlx create-prez-app@${PREZ_UI_VERSION} /app
 
 WORKDIR /app
 
-# Apply the repository's Prez UI component and page overrides.
 COPY overrides/ /app/
 
 RUN pnpm install
