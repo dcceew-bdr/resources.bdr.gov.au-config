@@ -1,0 +1,9 @@
+.task/
+.pnpm-store/
+docker/.env
+prez/local.settings.json
+prez/.venv/
+prez/requirements.txt
+prez/.reference_data/
+__pycache__/
+*.py[cod]
