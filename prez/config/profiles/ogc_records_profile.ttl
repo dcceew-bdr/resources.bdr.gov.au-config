@@ -2,6 +2,7 @@ PREFIX altr-ext: <http://www.w3.org/ns/dx/connegp/altr-ext#>
 PREFIX dcat: <http://www.w3.org/ns/dcat#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX olis: <https://olis.dev/>
 PREFIX prez: <https://prez.dev/>
 PREFIX prof: <http://www.w3.org/ns/dx/prof/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -9,6 +10,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <https://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX vann: <http://purl.org/vocab/vann/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX shext: <http://example.com/shacl-extension#>
 
@@ -28,7 +30,7 @@ prez:OGCRecordsProfile
     altr-ext:hasNodeShape
         [
             a sh:NodeShape ;
-            sh:targetClass dcat:Catalog , dcat:Resource , skos:Concept , skos:Collection , rdf:Resource , prez:SearchResult , prez:CQLFilterResult ;
+            sh:targetClass dcat:Catalog , dcat:Resource , schema:DataCatalog , skos:Concept , skos:Collection , rdf:Resource , prez:SearchResult , prez:CQLFilterResult ;
             altr-ext:hasDefaultProfile prez:OGCListingProfile
         ],
         [
@@ -48,7 +50,7 @@ prez:OGCRecordsProfile
         ],
         [
             a sh:NodeShape ;
-            sh:targetClass dcat:Catalog, dcat:Resource, skos:Concept, rdf:Resource ;
+            sh:targetClass dcat:Catalog, dcat:Resource, schema:DataCatalog, skos:Concept, rdf:Resource ;
             altr-ext:hasDefaultProfile prez:OGCItemProfile
         ] .
 
@@ -59,7 +61,7 @@ prez:OGCListingProfile
     dcterms:description "A profile for listing different kinds of items relevant to an OGC Records API" ;
     altr-ext:hasResourceFormat "application/ld+json", "application/anot+ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" ;
     altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
-    altr-ext:constrainsClass dcat:Catalog, skos:Collection, skos:Concept, dcat:Resource, prof:Profile, prez:SearchResult, prez:CQLFilterResult, rdf:Resource ;
+    altr-ext:constrainsClass dcat:Catalog, schema:DataCatalog, skos:Collection, skos:Concept, dcat:Resource, prof:Profile, prez:SearchResult, prez:CQLFilterResult, rdf:Resource ;
     sh:property [ sh:path rdf:type ] .
 
 prez:OGCItemProfile
@@ -71,8 +73,18 @@ prez:OGCItemProfile
     altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
     sh:property
         [ sh:path [ sh:union ( [ shext:bNodeDepth "2" ] shext:allPredicateValues ) ] ],
-        [ sh:maxCount 0 ; sh:path dcterms:hasPart , rdfs:member , skos:member ] ;
-    altr-ext:constrainsClass dcat:Dataset, dcat:Catalog, dcat:Resource, skos:ConceptScheme, skos:Collection, skos:Concept, rdf:Resource, prof:Profile .
+        [
+            sh:maxCount 0 ;
+            sh:path
+                dcterms:hasPart ,
+                olis:includes ,
+                rdfs:member ,
+                schema:hasPart ,
+                skos:member ,
+                vann:preferredNamespacePrefix ,
+                vann:preferredNamespaceUri ;
+        ] ;
+    altr-ext:constrainsClass dcat:Dataset, dcat:Catalog, dcat:Resource, schema:DataCatalog, skos:ConceptScheme, skos:Collection, skos:Concept, rdf:Resource, prof:Profile .
 
 prez:OGCSchemesListProfile
     a prof:Profile, prez:ListingProfile, sh:NodeShape ;
