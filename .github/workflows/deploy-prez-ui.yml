@@ -1,0 +1,54 @@
+name: Deploy PrezUI Static Web App
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "prez-ui/**"
+      - ".github/workflows/deploy-prez-ui.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-prez-ui-dev
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Build the static PrezUI site
+        env:
+          PREZ_API_ENDPOINT: ${{ vars.PREZ_API_ENDPOINT }}
+        run: |
+          docker build \
+            --build-arg NUXT_PUBLIC_PREZ_API_ENDPOINT="$PREZ_API_ENDPOINT" \
+            --tag resources-bdr-prez-ui:deploy \
+            prez-ui
+
+      - name: Extract generated site
+        run: |
+          container_id="$(docker create resources-bdr-prez-ui:deploy)"
+          trap 'docker rm -f "$container_id" >/dev/null 2>&1 || true' EXIT
+          mkdir -p prez-ui-dist
+          docker cp "$container_id:/usr/share/nginx/html/." prez-ui-dist/
+
+      - name: Deploy PrezUI to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: prez-ui-dist
+          output_location: ""
+          skip_app_build: true
+          skip_api_build: true
+          production_branch: main
+
