@@ -22,7 +22,9 @@ The local Functions host listens on <http://localhost:7071>. Copy
 For Azure deployment, the repository workflow exports `uv.lock` to a temporary
 `requirements.txt` without pip hashes and deploys this directory with Azure's
 Python remote build. Hashes are omitted because pip cannot hash the locked Git
-dependencies; their exact commit revisions remain pinned by `uv.lock`.
+dependencies. The duplicate direct `rdf2geojson` requirement is omitted because
+Prez already pins it by tag with the required `oxigraph` extra; emitting both
+tag and commit URL forms causes pip to report a dependency conflict.
 Configure production values as Function App environment variables; Azure does not
 publish or read `local.settings.json` in production. See the repository root
 README for the required Azure and GitHub settings.

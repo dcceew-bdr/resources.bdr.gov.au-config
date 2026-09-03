@@ -32,9 +32,10 @@ jobs:
           cache-dependency-glob: prez/uv.lock
 
       - name: Export locked production dependencies
-        # Azure's remote pip build cannot verify hashes for the pinned Git
-        # dependencies. uv.lock still fixes their exact commit revisions.
-        run: uv export --project prez --locked --no-dev --no-hashes --output-file prez/requirements.txt
+        # Azure's remote pip build cannot verify hashes for Git dependencies.
+        # Prez itself pins rdf2geojson with its oxigraph extra; omit uv's second
+        # direct-URL form so pip does not treat tag and commit URLs as a conflict.
+        run: uv export --project prez --locked --no-dev --no-hashes --no-emit-package rdf2geojson --output-file prez/requirements.txt
 
       - name: Log in to Azure with GitHub OIDC
         uses: azure/login@v3
