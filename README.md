@@ -122,32 +122,38 @@ task functions:down
 
 ## Deploying to Azure
 
-Production uses two independent Azure resources:
+The development deployment uses two independent Azure application resources:
 
 - Prez runs in a Python 3.12 Azure Function App on the Flex Consumption plan.
 - PrezUI is generated as a client-side Nuxt site and deployed to Azure Static Web Apps.
 
+Fuseki runs separately on the VM managed by `resources.bdr.gov.au-infra`.
+
 The workflows under `.github/workflows/` deploy both applications when relevant
-files change on `main`. Create the Azure resources before enabling the workflows.
+files change on `main`. Apply `resources.bdr.gov.au-infra` before enabling them.
 
 ### Function App
 
-Create a Linux Flex Consumption Function App using Functions runtime 4, Python
-3.12, a storage account, and Application Insights. Configure these application
-settings in Azure:
+The Linux Flex Consumption Function App, storage account, Application Insights,
+settings, and Key Vault reference are managed by `resources.bdr.gov.au-infra`.
+The effective application settings include:
 
 ```text
-FUNCTIONS_WORKER_RUNTIME=python
 AzureWebJobsFeatureFlags=EnableWorkerIndexing
 SPARQL_REPO_TYPE=remote
-SPARQL_ENDPOINT=https://fuseki.dev.kurrawong.ai/bdr-res/sparql
-SPARQL_USERNAME=bdr-res
+SPARQL_ENDPOINT=https://fuseki.resources.dev.bdr.gov.au/refdata/sparql
+SPARQL_USERNAME=refdata
 SPARQL_PASSWORD=<secret>
 ENABLE_SPARQL_ENDPOINT=true
 FUNCTION_APP_AUTH_LEVEL=ANONYMOUS
 FUNCTION_APP_ROOT_PATH=
-CORS_ALLOWED_ORIGIN=https://<static-web-app-hostname>
+CORS_ALLOWED_ORIGIN=https://resources.dev.bdr.gov.au
 ```
+
+Do not add `FUNCTIONS_WORKER_RUNTIME` to the deployed Function App. Flex
+Consumption configures Python 3.12 through the Function runtime properties and
+rejects that legacy app setting. It remains in `prez/local.settings.example.json`
+because Azure Functions Core Tools requires it for local development.
 
 The Function must be anonymous because a Function key cannot safely be embedded
 in the static browser application. Store the SPARQL password in Azure application
@@ -155,7 +161,7 @@ settings or use a Key Vault reference. Do not publish `local.settings.json`.
 
 The deployment workflow uses GitHub OIDC. Configure a federated Azure identity
 for this repository and grant it permission to deploy to the Function App. Add
-these GitHub Actions secrets:
+these non-secret GitHub Actions repository or `dev` environment variables:
 
 ```text
 AZURE_CLIENT_ID
@@ -163,35 +169,39 @@ AZURE_TENANT_ID
 AZURE_SUBSCRIPTION_ID
 ```
 
-Add this GitHub Actions repository variable:
+Also add this GitHub Actions repository or `dev` environment variable:
 
 ```text
-AZURE_FUNCTION_APP_NAME=<Function App resource name>
+AZURE_FUNCTION_APP_NAME=resources-bdr-dev-prez-0zlag
 ```
 
-The workflow exports the locked `uv` environment to `requirements.txt` and asks
-Azure to perform the Linux remote build. The generated file remains ignored
-locally.
+The workflow in `.github/workflows/deploy-prez.yml` exports the locked `uv`
+environment to `requirements.txt` and asks Azure to perform the Flex Consumption
+remote build. The generated file remains ignored locally.
 
 ### Static Web App
 
-Create an Azure Static Web App and obtain its deployment token. Add this GitHub
-Actions secret:
+The Static Web App is managed by `resources.bdr.gov.au-infra`. Store its
+sensitive Terraform deployment-token output as this GitHub Actions repository
+or `dev` environment secret:
 
 ```text
 AZURE_STATIC_WEB_APPS_API_TOKEN=<deployment token>
 ```
 
-Add the public Function endpoint as a GitHub Actions repository variable. It has
-no `/api` suffix because `prez/host.json` sets an empty Functions route prefix:
+Add the public Function endpoint as a GitHub Actions repository or `dev`
+environment variable. It has no `/api` suffix because `prez/host.json` sets an
+empty Functions route prefix:
 
 ```text
-PREZ_API_ENDPOINT=https://<Function App resource name>.azurewebsites.net
+PREZ_API_ENDPOINT=https://resources-bdr-dev-prez-0zlag.azurewebsites.net
 ```
 
-The UI workflow installs the locked pnpm dependencies, runs `pnpm generate`, and
-deploys `prez-ui/.output/public`. `staticwebapp.config.json` provides the fallback
-needed when browser routes such as `/catalogs` are opened directly.
+The workflow in `.github/workflows/deploy-prez-ui.yml` builds the existing
+PrezUI Dockerfile with this endpoint, extracts the generated static files, and
+deploys them to Static Web Apps. This deliberately reuses the same Docker build
+as local testing. `prez-ui/overrides/public/staticwebapp.config.json` provides
+the fallback needed when browser routes such as `/catalogs` are opened directly.
 
 After Azure assigns the Static Web App hostname, set `CORS_ALLOWED_ORIGIN` on the
 Function App to that exact origin. If a custom UI domain is added later, update

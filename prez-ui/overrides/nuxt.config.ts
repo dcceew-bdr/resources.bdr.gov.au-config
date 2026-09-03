@@ -14,7 +14,8 @@ export default defineNuxtConfig({
         server: {
             allowedHosts: [
                 "bdr.gov.au",
-                "resources.bdr.gov.au"
+                "resources.bdr.gov.au",
+                "resources.dev.bdr.gov.au"
             ],
             hmr: {
                 host: "localhost",

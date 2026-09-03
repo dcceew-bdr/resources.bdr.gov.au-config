@@ -6,7 +6,7 @@
     "AzureWebJobsStorage": "",
     "UseDevelopmentStorage": true,
     "SPARQL_REPO_TYPE": "remote",
-    "SPARQL_ENDPOINT": "https://localhost:3030/refdata/",
+    "SPARQL_ENDPOINT": "https://fuseki.resources.dev.bdr.gov.au/refdata/sparql",
     "SPARQL_USERNAME": "refdata",
     "SPARQL_PASSWORD": "replace-me",
     "ENABLE_SPARQL_ENDPOINT": "true",

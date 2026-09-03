@@ -1,7 +1,7 @@
 export default defineAppConfig({
     menu: () => [
         { "label": "Home", "url": "/", "active": true },
-        { "label": "Resources", "url": "https://resources.bdr.gov.au", "active": true },
+        { "label": "Resources", "url": "https://resources.dev.bdr.gov.au", "active": true },
         { "label": "Submit", "url": "https://submit.bdr.gov.au", "active": true },
     ],
 
