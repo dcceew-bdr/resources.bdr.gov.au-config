@@ -1,4 +1,28 @@
 services:
+  fuseki:
+    profiles: ["container"]
+    build:
+      context: fuseki
+      dockerfile: Dockerfile
+      args:
+        FUSEKI_VERSION: ${FUSEKI_VERSION:-6.2.0-0}
+    image: bdr-resources-fuseki:${FUSEKI_VERSION:-6.2.0-0}
+    environment:
+      ADMIN_PASSWORD: ${FUSEKI_ADMIN_PASSWORD:-${SPARQL_PASSWORD:?Set FUSEKI_ADMIN_PASSWORD in docker/.env}}
+      REFDATA_PASSWORD: ${REFDATA_PASSWORD:-${SPARQL_PASSWORD:?Set REFDATA_PASSWORD in docker/.env}}
+      JAVA_OPTS: ${FUSEKI_JAVA_OPTS:--Xms1g -Xmx2g}
+    ports:
+      - "3030:3030"
+    volumes:
+      - fuseki-data:/fuseki
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:3030/$/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
   prez:
     profiles: ["container"]
     build:
@@ -9,9 +33,9 @@ services:
     image: bdr-resources-prez:${PREZ_VERSION:-4.23.7}
     environment:
       SPARQL_REPO_TYPE: remote
-      SPARQL_ENDPOINT: ${SPARQL_ENDPOINT:-https://fuseki.dev.kurrawong.ai/bdr-res/sparql}
-      SPARQL_USERNAME: ${SPARQL_USERNAME:-bdr-res}
-      SPARQL_PASSWORD: ${SPARQL_PASSWORD:?Set SPARQL_PASSWORD in docker/.env}
+      SPARQL_ENDPOINT: http://fuseki:3030/refdata/sparql
+      SPARQL_USERNAME: refdata
+      SPARQL_PASSWORD: ${REFDATA_PASSWORD:-${SPARQL_PASSWORD:?Set REFDATA_PASSWORD in docker/.env}}
       ENABLE_SPARQL_ENDPOINT: "true"
       CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:3000}
       # Prez uses this hierarchy when generating internal links for listings.
@@ -19,6 +43,9 @@ services:
       ENDPOINT_STRUCTURE: '["catalogues", "collections", "items"]'
     ports:
       - "8000:8000"
+    depends_on:
+      fuseki:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://prez:8000/health"]
       interval: 5s
@@ -70,3 +97,6 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+volumes:
+  fuseki-data:

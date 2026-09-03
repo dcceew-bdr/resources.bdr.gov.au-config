@@ -18,11 +18,11 @@ tasks:
     cmd: task -a
 
   stack:build:
-    desc: Build the Prez API and Prez UI images
+    desc: Build the Fuseki, Prez API, and Prez UI images
     cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} --profile container build
 
   stack:up:
-    desc: Start the Prez API and Prez UI stack
+    desc: Start the Fuseki, Prez API, and Prez UI stack
     cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} --profile container up -d
 
   stack:down:
@@ -40,6 +40,14 @@ tasks:
   stack:clean:
     desc: Stop the stack and remove its volumes
     cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} --profile container down -v
+
+  fuseki:up:
+    desc: Start only the Fuseki container
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} --profile container up -d fuseki
+
+  fuseki:restart:
+    desc: Restart Fuseki to rebuild its GeoSPARQL spatial index after loading data
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} --profile container restart fuseki
 
   functions:build:
     desc: Install the Function App and build its port-7071 UI image

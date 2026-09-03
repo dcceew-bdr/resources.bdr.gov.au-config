@@ -27,8 +27,8 @@ Create the local environment file:
 cp docker/.env.example docker/.env
 ```
 
-Set the remote Fuseki password in `docker/.env`: all the other config is already added to `docker/.env.example` for
-Prez to be able to access the data in Fuseki.
+Set `FUSEKI_ADMIN_PASSWORD` and `REFDATA_PASSWORD` in `docker/.env`. The latter is used by the dedicated `refdata`
+account shared by the local Fuseki dataset, Prez, and the data loader.
 
 ### Running the stack
 
@@ -44,7 +44,23 @@ Start the stack:
 task stack:up
 ```
 
-Open the catalogue UI at <http://localhost:3000/catalogs>.
+This starts Fuseki first and then starts Prez and PrezUI against its `refdata` dataset. Open the catalogue UI at
+<http://localhost:3000/catalogs> or the Fuseki UI at <http://localhost:3030/>.
+
+### Loading the reference data
+
+Check out `resources.bdr.gov.au-data` beside this repository and install
+[kgm](https://kurrawong.github.io/kgm/). With the stack healthy, load its manifest into the local dataset:
+
+```bash
+task data:sync
+task fuseki:restart
+```
+
+The sync task is the local equivalent of that repository's `resources/kgm-sync.sh`: it reads
+`../resources.bdr.gov.au-data/resources/manifest.ttl`, targets `http://localhost:3030/refdata/`, and authenticates as
+`refdata`. You may instead pass another manifest directly to `fuseki/kgm-sync.sh`. Restart Fuseki after a load so its
+on-disk GeoSPARQL index is rebuilt from the newly loaded data; the Lucene full-text index is maintained during updates.
 
 Other stack commands are:
 
@@ -55,8 +71,7 @@ task stack:down
 task stack:clean
 ```
 
-`stack:clean` removes stack-owned Docker volumes. It does not modify the remote
-Fuseki dataset.
+`stack:clean` removes the stack-owned `fuseki-data` volume and all locally loaded RDF data.
 
 ### Running with the Azure Functions emulator
 
@@ -103,7 +118,7 @@ task functions:down
 
 - **Prez UI:** <http://localhost:3000>
 - **Prez API:** <http://localhost:8000>
-- **Fuseki:** remote service configured by `SPARQL_ENDPOINT`
+- **Fuseki:** <http://localhost:3030/refdata/> (persistent TDB2 with Lucene full-text and GeoSPARQL indexes)
 
 ## Deploying to Azure
 
@@ -208,9 +223,13 @@ so Docker builds do not depend on absolute symlinks or another source checkout.
 selected version, generates the static site, and copies it into an Nginx runtime
 image.
 
-`docker-compose.yml` builds and runs the two images. The browser-facing API endpoint
+`docker-compose.yml` builds and runs the three images. The browser-facing API endpoint
 is embedded into the static UI at build time through
 `NUXT_PUBLIC_PREZ_API_ENDPOINT`.
+
+The derived image under `fuseki/` pins the Kurrawong Fuseki image and supplies the `refdata` dataset assembler and
+dedicated user. The assembler wraps a GeoSPARQL-enabled TDB2 dataset in a Lucene `text:TextDataset`; Fuseki exposes the
+outer text dataset so both indexes are available to Prez.
 
 The `functions` Compose profile builds only the UI, targeting the local Azure
 Functions host at port 7071. The Python Function App under `prez/` merges Prez's
