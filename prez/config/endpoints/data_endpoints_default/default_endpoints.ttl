@@ -8,21 +8,21 @@ PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-ex:catalogs-listing
+ex:catalogues-listing
     a
         ont:DynamicEndpoint ,
         ont:ListingEndpoint ;
-    rdfs:label "Catalogs Listing" ;
-    ont:apiPath "/catalogs" ;
+    rdfs:label "Catalogues Listing" ;
+    ont:apiPath "/catalogues" ;
     ont:relevantShapes ex:shape-R0-HL1 ;
 .
 
-ex:catalogs-object
+ex:catalogues-object
     a
         ont:DynamicEndpoint ,
         ont:ObjectEndpoint ;
-    rdfs:label "Catalogs Object" ;
-    ont:apiPath "/catalogs/{catalogId}" ;
+    rdfs:label "Catalogues Object" ;
+    ont:apiPath "/catalogues/{catalogId}" ;
     ont:relevantShapes ex:shape-R0-HL1 ;
 .
 
@@ -31,7 +31,7 @@ ex:collections-listing
         ont:DynamicEndpoint ,
         ont:ListingEndpoint ;
     rdfs:label "Collections Listing" ;
-    ont:apiPath "/catalogs/{catalogId}/collections" ;
+    ont:apiPath "/catalogues/{catalogId}/collections" ;
     ont:relevantShapes ex:shape-R0-HL2 ;
 .
 
@@ -40,7 +40,7 @@ ex:collections-object
         ont:DynamicEndpoint ,
         ont:ObjectEndpoint ;
     rdfs:label "Collections Object" ;
-    ont:apiPath "/catalogs/{catalogId}/collections/{recordsCollectionId}" ;
+    ont:apiPath "/catalogues/{catalogId}/collections/{recordsCollectionId}" ;
     ont:relevantShapes ex:shape-R0-HL2 ;
 .
 
@@ -49,7 +49,7 @@ ex:items-listing
         ont:DynamicEndpoint ,
         ont:ListingEndpoint ;
     rdfs:label "Items Listing" ;
-    ont:apiPath "/catalogs/{catalogId}/collections/{recordsCollectionId}/items" ;
+    ont:apiPath "/catalogues/{catalogId}/collections/{recordsCollectionId}/items" ;
     ont:relevantShapes ex:shape-R0-HL3 ;
 .
 
@@ -58,7 +58,7 @@ ex:items-object
         ont:DynamicEndpoint ,
         ont:ObjectEndpoint ;
     rdfs:label "Items Object" ;
-    ont:apiPath "/catalogs/{catalogId}/collections/{recordsCollectionId}/items/{itemId}" ;
+    ont:apiPath "/catalogues/{catalogId}/collections/{recordsCollectionId}/items/{itemId}" ;
     ont:relevantShapes ex:shape-R0-HL3 ;
 .
 

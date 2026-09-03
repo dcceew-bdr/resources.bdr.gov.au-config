@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        overflow-y: scroll;
+    }
+
+    :root {
+        /* define your Tailwind CSS variables (in HSL values without the hsl()) here */
+        --primary: 197 100% 29%; /* links and h1 bottom border */
+        --primary-foreground: 0 0% 100%;
+        --secondary: 0 0% 20%; /* and link hover */
+        --secondary-foreground: 0 0% 100%;
+        --tertiary: 188 78% 15%; /* nav link color */
+        --tertiary-foreground: 0 0% 100%;
+        --link: var(--primary);
+        
+        --nav: #8bddf8; /* active nav bottom border */
+    }
+}
+
+@layer components {
+    .container {
+        max-width: 1344px; /* Adjust as needed to match the narrower image */
+    }
+}

@@ -1,0 +1,40 @@
+/* other CSS for your theme goes here */
+body, html {
+    font-family: "Open Sans", Arial, Helvetica Neue, sans-serif;
+    color: #707070;
+}
+
+a:not(.btn):not(header a):not(.main-nav a):not(footer a) {
+    text-decoration: underline;
+}
+
+a:not(.btn):not(header a):not(.main-nav a):not(footer a):hover {
+    color: hsl(var(--secondary));
+}
+
+h1 {
+    color: hsl(var(--secondary));
+    border-bottom: 2px solid hsl(var(--primary));
+}
+
+h2 {
+    color: #00558a;
+}
+
+h3 {
+    color: hsl(var(--secondary));
+    font-weight: bold;
+}
+
+.breadcrumbs a {
+    font-weight: bold;
+    text-decoration: none !important;
+}
+
+.breadcrumbs .breadcrumb-page {
+    color: #707070;
+}
+
+p {
+    margin-bottom: 15px;
+}

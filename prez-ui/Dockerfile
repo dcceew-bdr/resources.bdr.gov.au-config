@@ -21,6 +21,11 @@ RUN pnpm dlx create-prez-app@${PREZ_UI_VERSION} /app
 
 WORKDIR /app
 
+# The BDR layer targets Prez UI 4.1's root-based Nuxt layout. Prez UI 4.3's
+# starter also contains an app/ tree, which Nuxt would otherwise discover
+# alongside the overlaid layer and compile as a second, incompatible source.
+RUN rm -rf /app/app
+
 COPY overrides/ /app/
 
 RUN pnpm install

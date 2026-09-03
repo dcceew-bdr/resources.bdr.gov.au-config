@@ -14,6 +14,9 @@ services:
       SPARQL_PASSWORD: ${SPARQL_PASSWORD:?Set SPARQL_PASSWORD in docker/.env}
       ENABLE_SPARQL_ENDPOINT: "true"
       CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:3000}
+      # Prez uses this hierarchy when generating internal links for listings.
+      # Keep it aligned with prez/config/endpoints/data_endpoints_default.
+      ENDPOINT_STRUCTURE: '["catalogues", "collections", "items"]'
     ports:
       - "8000:8000"
     healthcheck:
