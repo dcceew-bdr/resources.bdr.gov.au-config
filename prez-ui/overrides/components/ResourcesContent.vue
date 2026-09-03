@@ -1,12 +1,9 @@
 <script setup lang="ts">
-// Import the validator component
-import BdrValidator from '@/components/BdrValidator.vue';
 import BdrLayout from '../layouts/default.vue';
-import { watch } from 'vue'; // Import watch if needed elsewhere, or remove if only used in BdrValidator
 </script>
 <template>
   <BdrLayout>
-    <template #header-text>Resources</template>
+    <template #header-text>BDR Resources</template>
     <template #default>
       <div class="flex gap-8 items-start container mx-auto py-8"> <!-- Added items-start -->
         <div class="w-2/3 leading-relaxed"> <!-- Main content area -->
@@ -25,12 +22,12 @@ import { watch } from 'vue'; // Import watch if needed elsewhere, or remove if o
           
           <div class="p-6 border border-green-600 rounded bg-green-50">
             <h3 class="text-2xl font-semibold mb-2">Validate Data</h3>
-            <p class="mb-4">Use this tool to validate data that should be sent to the BDR. You can select different forms of validation below for different scenarios.</p>
-
-            <!-- Integrate the BdrValidator component -->
-            <BdrValidator />
-            <!-- End Validator Component -->
-
+            <p>
+              The multiple validators relevant to the BDR and ABIS data can be used online at
+              <a href="https://tools.kurrawong.ai/validate" class="underline hover:text-blue-600" target="_blank" rel="noopener noreferrer">https://tools.kurrawong.ai/validate</a>.
+              The ABIS and BDR-specific ones are catalogued at
+              <NuxtLink to="/catalogues/validators:/collections" class="underline hover:text-blue-600">BDR Validators</NuxtLink>.
+            </p>
           </div>
         </div>
         <!-- End BDR Tools Section -->
@@ -45,7 +42,7 @@ import { watch } from 'vue'; // Import watch if needed elsewhere, or remove if o
               <li><a href="https://linked.data.gov.au/def/abis/overview" class="underline hover:text-blue-600" target="_blank" rel="noopener noreferrer">ABIS Overview (1 page)</a></li>
               <li><a href="https://linked.data.gov.au/def/abis" class="underline hover:text-blue-600" target="_blank" rel="noopener noreferrer">ABIS Specification</a></li>
               <li><a href="https://linked.data.gov.au/def/bdr-pr" class="underline hover:text-blue-600" target="_blank" rel="noopener noreferrer">BDR Profile of ABIS</a></li>
-              <li><a href="https://resources.bdr.gov.au/catalogues/bdr-cat:vocabularies" class="underline hover:text-blue-600" target="_blank" rel="noopener noreferrer">ABIS Vocabularies</a></li>
+              <li><NuxtLink to="/catalogues/vocabs:/collections" class="underline hover:text-blue-600">ABIS &amp; BDR Vocabularies</NuxtLink></li>
             </ul>
           </div>
           <div class="border-2 border-blue-800 p-4 rounded">

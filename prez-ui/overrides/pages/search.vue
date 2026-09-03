@@ -5,7 +5,8 @@ const appConfig = useAppConfig();
 const apiEndpoint = useGetPrezAPIEndpoint();
 const { getPageUrl, pagination, formSubmitToNavigate } = usePageInfo();
 const route = useRoute();
-const urlPath = ref(getPageUrl());
+const getSearchPageUrl = () => getPageUrl().replace(/^\/search\/(?=\?)/, '/search');
+const urlPath = ref(getSearchPageUrl());
 
 const { status, error, data } = useSearch(apiEndpoint, urlPath);
 
@@ -13,7 +14,7 @@ const q = ref((route.query.q || '').toString());
 
 // when a new page is navigated to
 watch(() => route.fullPath, () => {
-    urlPath.value = getPageUrl();
+    urlPath.value = getSearchPageUrl();
 });
 
 const inSearchMode = computed(() => (route.query?.q || '').length > 0);

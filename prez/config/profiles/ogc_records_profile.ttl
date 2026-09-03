@@ -61,7 +61,8 @@ prez:OGCListingProfile
     dcterms:description "A profile for listing different kinds of items relevant to an OGC Records API" ;
     altr-ext:hasResourceFormat "application/ld+json", "application/anot+ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" ;
     altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
-    altr-ext:constrainsClass dcat:Catalog, schema:DataCatalog, skos:Collection, skos:Concept, dcat:Resource, prof:Profile, prez:SearchResult, prez:CQLFilterResult, rdf:Resource .
+    altr-ext:constrainsClass dcat:Catalog, schema:DataCatalog, skos:Collection, skos:Concept, dcat:Resource, prof:Profile, prez:SearchResult, prez:CQLFilterResult, rdf:Resource ;
+    sh:property [ sh:path rdf:type ] .
 
 prez:OGCItemProfile
     a prof:Profile, prez:ObjectProfile, sh:NodeShape ;
@@ -94,7 +95,7 @@ prez:OGCSchemesListProfile
     altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
     altr-ext:constrainsClass skos:ConceptScheme, prez:CQLFilterResult ;
     sh:property [
-        sh:path [ sh:union ( schema:publisher schema:keywords ) ]
+        sh:path [ sh:union ( rdf:type schema:publisher schema:keywords ) ]
     ] .
 
 prez:OGCSchemesObjectProfile

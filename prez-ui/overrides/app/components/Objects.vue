@@ -11,7 +11,7 @@ const term = resolveComponent("Term");
 
 const objects = computed(() =>
   props.predicate.value === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    ? props.objects.filter((object) => object.value !== "https://olis.dev/RealGraph")
+    ? props.objects.filter((object) => !object.value.startsWith("https://olis.dev/"))
     : props.objects,
 );
 
